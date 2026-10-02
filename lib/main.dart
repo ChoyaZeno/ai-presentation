@@ -47,9 +47,9 @@ class PresentationApp extends StatelessWidget {
             buttonLabel: 'Start',
             content: (context) => _page(
               context,
-              heading: 'Write skills your AI can actually use.',
+              heading: 'Multi-agent brainstorming, made rigorous.',
               subText:
-                  'A practical guide to agent files, SKILL.md, and getting discovery right.',
+                  'For developers already using Copilot: build a reusable brainstorm workflow, then verify what it returns.',
               children: [
                 Wrap(
                   spacing: context.theme.spacings.xs,
@@ -76,7 +76,7 @@ class PresentationApp extends StatelessWidget {
                   type: DSNotificationType.informative,
                   titleText: 'What you will leave with',
                   bodyText:
-                      'A clear mental model, a SKILL.md template, and a checklist to ship your first skill this week.',
+                      'A skill header, a repeatable research workflow, and an authoring checklist. Gherkin documentation is a short second use case.',
                 ),
               ],
             ),
@@ -86,21 +86,24 @@ class PresentationApp extends StatelessWidget {
             title: 'Agenda',
             content: (context) => _page(
               context,
-              heading: 'What we will cover.',
-              subText: 'From why skills matter to a skill you can ship.',
+              heading: 'From a broad question to evidence.',
+              subText: 'The workflow inside multi-agent-brainstorm.',
               children: [
                 DSList(
                   children: [
                     for (final (index, item) in const [
-                      ('Why skills?', DSIconAssets.notificationCirclequestion),
+                      (
+                        'When this skill fits',
+                        DSIconAssets.notificationCirclequestion,
+                      ),
                       ('Pick the right file', DSIconAssets.layergroup),
-                      ('How skills get loaded', DSIconAssets.download),
-                      ('Anatomy of a skill', DSIconAssets.filesFile),
-                      ('Writing the description', DSIconAssets.search),
-                      ('Writing the body', DSIconAssets.pencil),
-                      ('Bundled resources', DSIconAssets.briefcasemedical),
-                      ('Mistakes and testing', DSIconAssets.checkcircle),
+                      ('Trigger and anatomy', DSIconAssets.filesFile),
+                      ('Frame and delegate', DSIconAssets.group),
+                      ('Research guardrails', DSIconAssets.lock),
+                      ('Synthesize and verify', DSIconAssets.checkcircle),
+                      ('Second use case: Gherkin docs', DSIconAssets.book),
                       ('Game: Skill Feud', DSIconAssets.group),
+                      ('Live demo', DSIconAssets.arrowRight),
                     ].indexed)
                       DSListItem(
                         subjectIcon: item.$2,
@@ -117,42 +120,45 @@ class PresentationApp extends StatelessWidget {
             title: 'Why skills?',
             content: (context) => _page(
               context,
-              heading: 'Prompts get retyped. Skills get reused.',
+              heading: 'One skill, two high-value jobs.',
               subText:
-                  'A skill captures how your team does a task, so the agent does it the same way every time.',
+                  'Today\'s main thread is independent brainstorming. The same skill also supports a separate app-documentation workflow.',
               children: [
                 _columns(context, [
                   DsBulletList(
-                    title: 'Without a skill',
+                    title: 'Broad brainstorm',
                     bulletItems: [
                       BulletListItem(
-                        text: 'You re-explain the process in every chat.',
-                        iconData: DSIconAssets.thumbDown,
+                        text:
+                            'Explore a broad question with meaningfully different options.',
+                        iconData: DSIconAssets.search,
                       ),
                       BulletListItem(
-                        text: 'Results depend on who wrote the prompt.',
-                        iconData: DSIconAssets.thumbDown,
+                        text: 'Use independent, read-only research agents.',
+                        iconData: DSIconAssets.group,
                       ),
                       BulletListItem(
-                        text: 'Know-how lives in one person\'s head.',
-                        iconData: DSIconAssets.thumbDown,
+                        text: 'Finish with a small set of testable choices.',
+                        iconData: DSIconAssets.checkcircle,
                       ),
                     ],
                   ),
                   DsBulletList(
-                    title: 'With a skill',
+                    title: 'Second use case: app documentation',
                     bulletItems: [
                       BulletListItem(
-                        text: 'The procedure is written once and versioned in git.',
-                        iconData: DSIconAssets.thumbUp,
+                        text:
+                            'Inventory the app\'s observable user-facing behavior.',
+                        iconData: DSIconAssets.eye,
                       ),
                       BulletListItem(
-                        text: 'Same steps, same quality, for everyone.',
-                        iconData: DSIconAssets.thumbUp,
+                        text: 'Write evidence-backed Gherkin .feature files.',
+                        iconData: DSIconAssets.filesFile,
                       ),
                       BulletListItem(
-                        text: 'Loaded only when relevant, so no wasted context.',
-                        iconData: DSIconAssets.thumbUp,
+                        text:
+                            'Track coverage and report evidence gaps honestly.',
+                        iconData: DSIconAssets.checkcircle,
                       ),
                     ],
                   ),
@@ -165,39 +171,39 @@ class PresentationApp extends StatelessWidget {
             title: 'Pick the right file',
             content: (context) => _page(
               context,
-              heading: 'Pick the right file for the job.',
+              heading: 'Use the file that matches the work.',
               subText:
-                  'Each customization file answers a different question. Choose by scope first.',
+                  'This example is a user-invocable skill, not an autonomous agent persona.',
               children: [
                 DSList(
                   children: [
                     _fileRow(
                       'copilot-instructions.md / AGENTS.md',
-                      'Repo-wide conventions the agent should always follow.',
+                      'Repo-wide conventions that apply regardless of the current task.',
                       'Always on',
                       DSTagType.positive,
                     ),
                     _fileRow(
                       '.github/instructions/*.instructions.md',
-                      'Rules for specific paths, targeted with a narrow applyTo glob.',
+                      'Rules for matching paths, scoped with a narrow applyTo glob.',
                       'By file path',
                       DSTagType.informative,
                     ),
                     _fileRow(
                       '.github/agents/*.agent.md',
-                      'A specialist persona with its own tools, model, and boundaries.',
+                      'A specialist role with its own tools, model, and boundaries.',
                       'A role',
                       DSTagType.warning,
                     ),
                     _fileRow(
                       '.github/prompts/*.prompt.md',
-                      'One reusable task you start yourself as a slash command.',
+                      'One reusable task that you start yourself.',
                       'A command',
                       DSTagType.neutral,
                     ),
                     _fileRow(
-                      '.github/skills/<name>/SKILL.md',
-                      'A capability with steps and helpers, loaded when the task matches.',
+                      '.github/skills/multi-agent-brainstorm/SKILL.md',
+                      'A discoverable workflow with explicit triggers, guardrails, and two procedures.',
                       'A capability',
                       DSTagType.positive,
                     ),
@@ -211,27 +217,27 @@ class PresentationApp extends StatelessWidget {
             title: 'How skills get loaded',
             content: (context) => _page(
               context,
-              heading: 'Skills load in three levels.',
+              heading: 'The description is the gatekeeper.',
               subText:
-                  'Progressive disclosure keeps the context window lean until the skill is needed.',
+                  'The agent sees the trigger first; the workflow is relevant only after the request matches.',
               children: [
                 DSList(
                   children: [
                     _fileRow(
                       '1. Metadata: name + description',
-                      'Always visible to the agent. This is the only thing it uses to decide whether to open your skill.',
+                      'Always available for discovery. Name both brainstorm/comparison requests and full-app Gherkin documentation.',
                       'Always loaded',
                       DSTagType.positive,
                     ),
                     _fileRow(
                       '2. Body of SKILL.md',
-                      'Read when a request matches the description. Holds the procedure and decision points.',
+                      'Holds the guardrails, brainstorm workflow, and app feature documentation workflow.',
                       'On match',
                       DSTagType.informative,
                     ),
                     _fileRow(
-                      '3. Resources: scripts/, references/, assets/',
-                      'Opened only when the body points to them, so they can be large.',
+                      '3. Optional resources',
+                      'Add scripts/, references/, or assets/ only when this skill needs reusable supporting material.',
                       'On demand',
                       DSTagType.neutral,
                     ),
@@ -251,15 +257,16 @@ class PresentationApp extends StatelessWidget {
             title: 'Anatomy of a skill',
             content: (context) => _page(
               context,
-              heading: 'One folder, one SKILL.md, optional helpers.',
-              subText: 'Example: a skill that drafts release notes.',
+              heading: 'One folder packages a focused workflow.',
+              subText:
+                  'The current multi-agent-brainstorm skill keeps its process and reusable prompt patterns in SKILL.md.',
               children: [
                 _columns(context, [
                   DSList(
                     children: const [
                       DSListItem(
                         subjectIcon: DSIconAssets.layergroup,
-                        label: '.github/skills/release-notes/',
+                        label: '.github/skills/multi-agent-brainstorm/',
                         content: 'Folder',
                       ),
                       DSListItem(
@@ -268,40 +275,43 @@ class PresentationApp extends StatelessWidget {
                         content: 'Required',
                       ),
                       DSListItem(
-                        subjectIcon: DSIconAssets.calculator,
-                        label: 'scripts/collect_commits.sh',
-                        content: 'Optional',
+                        subjectIcon: DSIconAssets.lock,
+                        label: 'Guardrails + workflow',
+                        content: 'Core',
                       ),
                       DSListItem(
-                        subjectIcon: DSIconAssets.book,
-                        label: 'references/changelog-style.md',
-                        content: 'Optional',
+                        subjectIcon: DSIconAssets.group,
+                        label: 'Prompt patterns',
+                        content: 'Reusable',
                       ),
                       DSListItem(
                         subjectIcon: DSIconAssets.filesContract,
-                        label: 'assets/template.md',
-                        content: 'Optional',
+                        label: 'App feature docs',
+                        content: 'Second path',
                       ),
                     ],
                   ),
                   DsBulletList(
-                    title: 'Rules that prevent silent failures',
+                    title: 'What makes this skill work',
                     bulletItems: [
                       BulletListItem(
                         text:
-                            'name uses lowercase letters, digits, and hyphens, and matches the folder name.',
+                            'The name matches the folder and the description states exact trigger conditions.',
                         iconData: DSIconAssets.check,
                       ),
                       BulletListItem(
-                        text: 'description is required and stays under 1024 characters.',
+                        text:
+                            'The user-invocable skill asks before each run for reasoning effort.',
                         iconData: DSIconAssets.check,
                       ),
                       BulletListItem(
-                        text: 'Keep SKILL.md under roughly 500 lines.',
+                        text:
+                            'Each agent gets a distinct, non-overlapping lens.',
                         iconData: DSIconAssets.check,
                       ),
                       BulletListItem(
-                        text: 'Link helpers with relative paths from SKILL.md.',
+                        text:
+                            'Claims are verified; no result is accepted by vote alone.',
                         iconData: DSIconAssets.check,
                       ),
                     ],
@@ -315,28 +325,32 @@ class PresentationApp extends StatelessWidget {
             title: 'Frontmatter',
             content: (context) => _page(
               context,
-              heading: 'Start with the frontmatter.',
+              heading: 'Use the real skill metadata.',
               subText:
-                  'The YAML header at the top of SKILL.md is what the agent sees first.',
+                  'Frontmatter is the YAML header between --- markers. It identifies the skill and says when to load it.',
               children: [
+                _codeBlock(
+                  context,
+                  '---\n'
+                  'name: multi-agent-brainstorm\n'
+                  'description: >-\n'
+                  '  Use when the user explicitly asks to brainstorm with multiple agents,\n'
+                  '  compare independent technical approaches, or document an application\'s\n'
+                  '  full user-facing functionality in Gherkin .feature files.\n'
+                  'user-invocable: true\n'
+                  '---',
+                ),
                 DSList(
                   children: [
                     _fileRow(
-                      'name',
-                      'release-notes',
+                      'Folder and name must match',
+                      '.github/skills/multi-agent-brainstorm/SKILL.md',
                       'Required',
-                      DSTagType.negative,
-                    ),
-                    _fileRow(
-                      'description',
-                      'Draft release notes from merged pull requests in our changelog style. '
-                          'Use when the user asks for release notes, a changelog, or a summary of what shipped.',
-                      'Required',
-                      DSTagType.negative,
+                      DSTagType.neutral,
                     ),
                     _fileRow(
                       'argument-hint',
-                      'version or date range, e.g. "v2.4.0" or "last two weeks"',
+                      'The full skill also includes a hint for question, scope, model, and output location.',
                       'Optional',
                       DSTagType.neutral,
                     ),
@@ -350,45 +364,49 @@ class PresentationApp extends StatelessWidget {
             title: 'Writing the description',
             content: (context) => _page(
               context,
-              heading: 'The description is the trigger.',
+              heading: 'The description must name both paths.',
               subText:
-                  'Write it for the model: say what the skill does and when to use it.',
+                  'A vague trigger either misses the workflow or activates it for unrelated work.',
               children: [
                 _columns(context, [
                   const DSNotification(
                     type: DSNotificationType.error,
                     titleText: 'Too vague',
-                    bodyText: '"Helps with documentation."',
+                    bodyText: '"Helps with AI tasks."',
                   ),
                   const DSNotification(
                     type: DSNotificationType.success,
                     titleText: 'Specific and triggerable',
                     bodyText:
-                        '"Generate API reference pages from OpenAPI specs. Use when the user asks to document endpoints, '
-                        'update API docs, or convert a Swagger file to Markdown."',
+                        '"Use when the user explicitly asks to brainstorm with multiple agents, compare independent technical approaches, '
+                        'or document an application\'s full user-facing functionality in Gherkin .feature files."',
                   ),
                 ]),
                 DsBulletList(
-                  title: 'Four habits of good descriptions',
+                  title: 'Why this trigger is discoverable',
                   bulletItems: [
                     BulletListItem(
-                      title: 'Lead with the capability',
-                      text: 'Start with a verb: generate, review, migrate, validate.',
+                      title: 'State the invocation condition',
+                      text:
+                          'It is for an explicit request, not every technical question.',
                       iconData: DSIconAssets.pencil,
                     ),
                     BulletListItem(
-                      title: 'Add "Use when ..."',
-                      text: 'List the phrases people actually type.',
+                      title: 'Name each supported workflow',
+                      text:
+                          'Independent brainstorming and full-app Gherkin documentation.',
                       iconData: DSIconAssets.comment,
                     ),
                     BulletListItem(
-                      title: 'Name concrete nouns',
-                      text: 'File types, tools, frameworks, and domains help matching.',
+                      title: 'Use concrete language',
+                      text:
+                          'Multiple agents, technical approaches, user-facing behavior, Gherkin.',
                       iconData: DSIconAssets.search,
                     ),
                     BulletListItem(
-                      title: 'Lean towards triggering',
-                      text: 'Under-triggering is the most common failure. Be explicit.',
+                      title: 'Keep the scope honest',
+                      text:
+                          'The skill does not claim to solve every AI or documentation task.',
                       iconData: DSIconAssets.arrowUp,
                     ),
                   ],
@@ -401,36 +419,36 @@ class PresentationApp extends StatelessWidget {
             title: 'Writing the body',
             content: (context) => _page(
               context,
-              heading: 'Write the body like a runbook.',
+              heading: 'Brainstorm workflow: frame, then divide.',
               subText:
-                  'Clear, ordered steps beat clever prose. Explain the why so the model can handle edge cases.',
+                  'Example decision: should a tool-routing app use a local model, a hosted model, or a hybrid?',
               children: [
                 DsBulletList(
+                  title: 'Before agents start',
                   bulletItems: [
                     BulletListItem(
-                      title: 'Use imperative, numbered steps',
-                      text: '"Collect merged PRs since the last tag. Group them by label."',
+                      title: 'Frame the decision',
+                      text:
+                          'State the target, constraints, and verified facts. Label anything else as an assumption.',
                       iconData: DSIconAssets.bullit,
                     ),
                     BulletListItem(
-                      title: 'Explain the reasoning',
-                      text: 'A short "because ..." generalises better than ALWAYS or NEVER in capitals.',
-                      iconData: DSIconAssets.comment,
+                      title: 'Choose model and effort',
+                      text:
+                          'Resolve the subagent model, then ask for analysis depth each run. Disclose if effort is only prompt guidance.',
+                      iconData: DSIconAssets.search,
                     ),
                     BulletListItem(
-                      title: 'Show one example',
-                      text: 'An input and the expected output anchor the format.',
-                      iconData: DSIconAssets.eye,
+                      title: 'Four lenses, one shared brief',
+                      text:
+                          'Local capability, hosted feasibility, on-device performance, and safe execution. Research is read-only; never share secrets.',
+                      iconData: DSIconAssets.group,
                     ),
                     BulletListItem(
-                      title: 'Define done',
-                      text: 'State the checks to run and what the final output looks like.',
+                      title: 'Specify a return contract',
+                      text:
+                          'Each lens returns options, evidence, risks, and one test that could reject its recommendation.',
                       iconData: DSIconAssets.checkcircle,
-                    ),
-                    BulletListItem(
-                      title: 'Keep it lean',
-                      text: 'Move long detail into references/ and say when to read it.',
-                      iconData: DSIconAssets.sliders,
                     ),
                   ],
                 ),
@@ -438,40 +456,86 @@ class PresentationApp extends StatelessWidget {
             ),
           ),
           _slide(
-            route: '/resources',
-            title: 'Bundled resources',
+            route: '/synthesize',
+            title: 'Synthesize and verify',
             content: (context) => _page(
               context,
-              heading: 'Bundle helpers, load them on demand.',
-              subText: 'Resources keep SKILL.md short and make results deterministic.',
+              heading: 'Synthesize; do not vote.',
+              subText:
+                  'Agreement is not proof. The coordinating thread owns verification, follow-up tests, and all edits.',
               children: [
                 DSList(
                   children: [
                     _fileRow(
-                      'scripts/',
-                      'Deterministic or repeated work: validation, conversion, data collection. Executed, not read.',
-                      'Run',
-                      DSTagType.positive,
-                    ),
-                    _fileRow(
-                      'references/',
-                      'Long docs, schemas, and API specs. Tell the agent when each file is worth reading.',
-                      'Read',
+                      'Group overlap; surface disagreement',
+                      'Independent perspectives should expose different options, not create a vote.',
+                      'Compare',
                       DSTagType.informative,
                     ),
                     _fileRow(
-                      'assets/',
-                      'Templates, boilerplate, and sample files used in the output.',
-                      'Copy',
+                      'Verify consequential claims',
+                      'Check repository evidence, tests, or authoritative documentation before recommending.',
+                      'Evidence',
+                      DSTagType.positive,
+                    ),
+                    _fileRow(
+                      'Choose the next discriminating test',
+                      'State its baseline and pass criterion before running it.',
+                      'Test',
+                      DSTagType.warning,
+                    ),
+                    _fileRow(
+                      'Stop and report honestly',
+                      'Record blockers, budget limits, unresolved risks, or incomplete work.',
+                      'Report',
                       DSTagType.neutral,
                     ),
                   ],
                 ),
-                const DSNotification(
-                  type: DSNotificationType.informative,
-                  titleText: 'Rule of thumb',
-                  bodyText:
-                      'If the agent writes the same helper code twice, turn it into a script in the skill.',
+              ],
+            ),
+          ),
+          _slide(
+            route: '/feature-docs',
+            title: 'App feature documentation',
+            content: (context) => _page(
+              context,
+              heading: 'For app docs, prove coverage.',
+              subText:
+                  'Second use case: Gherkin describes behavior as Given / When / Then. Here is a capability verified by this deck\'s widget test.',
+              children: [
+                DSList(
+                  children: [
+                    _fileRow(
+                      'Observe and verify',
+                      'Skill Feud has two Reveal all controls. The widget test verifies both boards reach 100.',
+                      'Evidence',
+                      DSTagType.positive,
+                    ),
+                    _fileRow(
+                      'Record the mapping',
+                      'A coverage ledger is a table: capability -> evidence -> scenario or an explicit gap.',
+                      'Trace',
+                      DSTagType.informative,
+                    ),
+                    _fileRow(
+                      'Check the whole inventory',
+                      'One example is not full coverage. Every in-scope capability needs a scenario or a recorded gap.',
+                      'Gate',
+                      DSTagType.warning,
+                    ),
+                  ],
+                ),
+                _codeBlock(
+                  context,
+                  'Feature: Skill Feud\n'
+                  '  Scenario: Reveal every answer\n'
+                  '    Given both boards have unrevealed answers\n'
+                  '    When I reveal all answers on both boards\n'
+                  '    Then each board shows a score of 100',
+                ),
+                const Text(
+                  'Illustrative documentation, not an executable Gherkin test.',
                 ),
               ],
             ),
@@ -481,34 +545,36 @@ class PresentationApp extends StatelessWidget {
             title: 'Common mistakes',
             content: (context) => _page(
               context,
-              heading: 'Common mistakes.',
-              subText: 'Most broken skills fail in one of these four ways.',
+              heading: 'Guardrails prevent predictable failures.',
+              subText:
+                  'Independent perspectives are useful only when the prompts and conclusions are handled carefully.',
               children: [
                 _columns(context, const [
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Vague description',
+                    titleText: 'Overlapping lenses',
                     bodyText:
-                        'The skill never triggers, or it triggers for everything.',
+                        'Near-identical agents add noise instead of independent evidence.',
                   ),
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Name does not match the folder',
-                    bodyText: 'Validation fails and the skill is never offered.',
+                    titleText: 'Treating agreement as proof',
+                    bodyText:
+                        'Verify consequential claims against code, tests, or trusted docs.',
                   ),
                 ]),
                 _columns(context, const [
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'One giant skill',
+                    titleText: 'Silent model substitution',
                     bodyText:
-                        'Split by workflow. Each skill should do one job well.',
+                        'Honor the requested model; label unavailable details and prompt-only effort honestly.',
                   ),
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Rules disguised as a skill',
+                    titleText: 'Claiming complete app coverage early',
                     bodyText:
-                        'Always-on conventions belong in instructions, not in a skill.',
+                        'Map every in-scope capability or record an evidence gap/out-of-scope item.',
                   ),
                 ]),
               ],
@@ -519,43 +585,48 @@ class PresentationApp extends StatelessWidget {
             title: 'Test like code',
             content: (context) => _page(
               context,
-              heading: 'Test a skill like you test code.',
-              subText: 'A short loop catches most trigger and quality problems.',
+              heading: 'Validate the workflow, not agent charisma.',
+              subText:
+                  'Test the trigger, the independence of the research, and whether the conclusion is evidence-backed.',
               children: [
                 DSList(
                   children: const [
                     DSListItem(
                       subjectIcon: DSIconAssets.pencil,
-                      label: 'Write 3 to 5 realistic prompts, including near misses',
+                      label:
+                          'Positive: ask for independent technical approaches',
                       content: '01',
                     ),
                     DSListItem(
                       subjectIcon: DSIconAssets.comment,
-                      label: 'Run each one in a fresh chat',
+                      label:
+                          'Near miss: give a simple task with one clear owner',
                       content: '02',
                     ),
                     DSListItem(
                       subjectIcon: DSIconAssets.eye,
-                      label: 'Check: did it trigger, and did it follow the steps?',
+                      label:
+                          'Confirm model resolution and effort question each run',
                       content: '03',
                     ),
                     DSListItem(
                       subjectIcon: DSIconAssets.arrowRotateright,
-                      label: 'Tighten the description or body, then repeat',
+                      label:
+                          'Check each agent has a distinct lens and shared facts',
                       content: '04',
                     ),
                     DSListItem(
                       subjectIcon: DSIconAssets.group,
-                      label: 'Commit it and share it with the team',
+                      label: 'Verify recommendations with a baseline test',
                       content: '05',
                     ),
                   ],
                 ),
                 const DSNotification(
                   type: DSNotificationType.success,
-                  titleText: 'Test the negatives too',
+                  titleText: 'Test the boundaries too',
                   bodyText:
-                      'Prompts that should NOT trigger the skill are as valuable as prompts that should.',
+                      'Check that explicit requests trigger the workflow and routine single-owner tasks do not fan out unnecessarily.',
                 ),
               ],
             ),
@@ -564,6 +635,68 @@ class PresentationApp extends StatelessWidget {
             route: '/skill-feud',
             title: 'Game: Skill Feud',
             content: (context) => const _SkillFeud(),
+          ),
+          _slide(
+            route: '/demo',
+            title: 'Live demo: model-selected tool routing',
+            content: (context) => _page(
+              context,
+              heading: 'Demo: model-selected tool routing.',
+              subText:
+                  'Prepared hypothetical case, not claims about a real app. Watch how independent lenses change the recommendation.',
+              children: [
+                _columns(context, [
+                  const DSNotification(
+                    type: DSNotificationType.informative,
+                    titleText: 'Live prompt: four independent lenses',
+                    bodyText:
+                        '/multi-agent-brainstorm Compare local, hosted, and hybrid tool routing for a hypothetical support app. Assume it must work offline, never send customer data to a provider, and always ask before write actions. No model or latency benchmarks exist yet. Use four lenses: local capability, hosted feasibility/privacy, on-device performance, and safe dispatch. Return ranked options, evidence vs assumptions, risks, and one minimal test. Research only; do not edit.',
+                  ),
+                  DSList(
+                    children: [
+                      DSListItem.twoLiner(
+                        label: 'Before sending',
+                        content:
+                            'Keep the assumptions identical for every lens. Do not add customer data, credentials, or private reasoning traces.',
+                      ),
+                      DSListItem.twoLiner(
+                        label: 'Resolve model + effort',
+                        content:
+                            'Confirm an available subagent model and answer the skill\'s effort question. These settings do not select the app\'s model.',
+                      ),
+                      DSListItem.twoLiner(
+                        label: 'If the demo is blocked',
+                        content:
+                            'Stop rather than silently substitute. Walk through the brief and expected return structure; do not present invented results as a run.',
+                      ),
+                    ],
+                  ),
+                ]),
+                DsBulletList(
+                  title: 'What to watch for in the live run',
+                  bulletItems: [
+                    BulletListItem(
+                      title: 'Do the lenses find different trade-offs?',
+                      text:
+                          'Look for distinct options, not four copies of the same answer.',
+                      iconData: DSIconAssets.group,
+                    ),
+                    BulletListItem(
+                      title: 'Does anyone invent a benchmark?',
+                      text:
+                          'No measured latency or model capability was supplied; those claims need verification.',
+                      iconData: DSIconAssets.search,
+                    ),
+                    BulletListItem(
+                      title: 'What would change our decision?',
+                      text:
+                          'Choose one proposed check and name its baseline and pass criterion before running it.',
+                      iconData: DSIconAssets.checkcircle,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           _slide(
             route: '/checklist',
@@ -577,31 +710,35 @@ class PresentationApp extends StatelessWidget {
             onPrimaryPressed: (context) => context.flutterDeck.goToSlide(1),
             content: (context) => _page(
               context,
-              heading: 'Ship one skill this week.',
+              heading: 'Make the next decision evidence-backed.',
               subText:
-                  'Pick a task you repeat, write the steps, and test the trigger.',
+                  'This week: capture one repeated task in SKILL.md, test it in a fresh conversation, and share it after the checklist passes.',
               children: [
                 DsBulletList(
-                  title: 'Your next steps',
+                  title: 'Take the workflow with you',
                   bulletItems: [
                     BulletListItem(
-                      title: 'Pick a repeated task',
-                      text: 'Release notes, code review, migrations, or test scaffolding.',
+                      title: 'Frame one useful question',
+                      text:
+                          'State what decision you need and which constraints matter.',
                       iconData: DSIconAssets.search,
                     ),
                     BulletListItem(
-                      title: 'Write SKILL.md',
-                      text: 'Frontmatter first, then numbered steps and a definition of done.',
+                      title: 'Choose the skill workflow',
+                      text:
+                          'Independent brainstorm or evidence-backed Gherkin documentation.',
                       iconData: DSIconAssets.pencil,
                     ),
                     BulletListItem(
-                      title: 'Test in a fresh chat',
-                      text: 'Check both triggering and quality, then refine.',
+                      title: 'Verify before recommending',
+                      text:
+                          'Check evidence, disagreements, and one discriminating test.',
                       iconData: DSIconAssets.checkcircle,
                     ),
                     BulletListItem(
-                      title: 'Share it',
-                      text: 'Commit it to .github/skills/ so the whole team benefits.',
+                      title: 'Report what remains',
+                      text:
+                          'Name assumptions, blockers, budget limits, and coverage gaps.',
                       iconData: DSIconAssets.group,
                     ),
                   ],
@@ -656,6 +793,19 @@ Widget _page(
   );
 }
 
+Widget _codeBlock(BuildContext context, String code) {
+  final theme = context.theme;
+  return DSCard(
+    child: Padding(
+      padding: EdgeInsets.all(theme.spacings.m),
+      child: SelectableText(
+        code,
+        style: theme.textStyles.bodyM.copyWith(fontFamily: 'monospace'),
+      ),
+    ),
+  );
+}
+
 Widget _columns(BuildContext context, List<Widget> children) {
   final spacing = context.theme.spacings;
   return Row(
@@ -681,57 +831,67 @@ typedef _FeudAnswer = ({String answer, String detail, int points});
 
 const List<_FeudAnswer> _agentAnswers = [
   (
-    answer: 'Defines a specialist persona',
-    detail: 'A focused role such as reviewer, planner, or tester.',
-    points: 32,
+    answer: 'Give a reviewer its own role instructions',
+    detail:
+        'Define the reviewer\'s priorities and expected output, rather than a task recipe.',
+    points: 30,
   ),
   (
-    answer: 'Restricts which tools it can use',
-    detail: 'The tools list keeps the agent safe and on task.',
-    points: 24,
+    answer: 'Limit a planner to read-only tools',
+    detail:
+        'Configure which tools the role can use; this is tool selection, not workflow guidance.',
+    points: 25,
   ),
   (
-    answer: 'You pick it yourself',
-    detail: 'Chosen from the agent picker, or called as a subagent.',
-    points: 18,
+    answer: 'Configure a model for a specialist role',
+    detail:
+        'Set the custom agent\'s model where the selected VS Code harness supports it.',
+    points: 20,
   ),
   (
-    answer: 'Lives in .github/agents/',
-    detail: 'Saved as <name>.agent.md.',
-    points: 14,
+    answer: 'Switch from planning to implementation',
+    detail:
+        'A handoff switches the active agent with conversation context and a prefilled next-step prompt.',
+    points: 15,
   ),
   (
-    answer: 'Can hand off to other agents',
-    detail: 'Handoffs chain roles, e.g. plan then implement.',
-    points: 12,
+    answer: 'Delegate research and get a result back',
+    detail:
+        'A custom subagent performs delegated work; the parent continues with its result rather than switching roles.',
+    points: 10,
   ),
 ];
 
 const List<_FeudAnswer> _skillAnswers = [
   (
-    answer: 'Loaded on demand',
-    detail: 'Only when the request matches the description.',
-    points: 35,
+    answer: 'Teach a repeatable testing procedure',
+    detail:
+        'Package the task steps and expected results independently of the agent\'s role.',
+    points: 30,
   ),
   (
-    answer: 'A folder with SKILL.md',
-    detail: 'Plus optional scripts/, references/, and assets/.',
+    answer: 'Bundle a setup script and service templates',
+    detail:
+        'Distribute the workflow with supporting files referenced from SKILL.md.',
     points: 25,
   ),
   (
-    answer: 'Description says what and when',
-    detail: 'The description is the trigger.',
+    answer: 'Make domain guidance discoverable on demand',
+    detail:
+        'Metadata helps match a task; instructions load when invoked. Relevance does not guarantee invocation.',
     points: 20,
   ),
   (
-    answer: 'Name matches the folder',
-    detail: 'Lowercase with hyphens, or it will not load.',
-    points: 12,
+    answer: 'Share task knowledge across AI products',
+    detail:
+        'Use the Agent Skills standard with compatible products; check locations, dependencies, and optional features.',
+    points: 15,
   ),
   (
-    answer: 'Portable across agents',
-    detail: 'Follows the open Agent Skills format.',
-    points: 8,
+    answer: 'Keep a deployment recipe manual-only',
+    detail:
+        'Set disable-model-invocation: true and invoke /skill-name yourself; this controls activation, not permissions.',
+    points: 10,
   ),
 ];
 
@@ -744,11 +904,14 @@ class _SkillFeud extends StatelessWidget {
       context,
       heading: 'Skill Feud.',
       subText:
-          'We asked 100 developers to name a characteristic of each file. Guess the top answers, then tap to reveal.',
+          'When to choose which in VS Code? Agents configure roles; skills supply task know-how. These are distinct reasons to choose, not exclusive capabilities. They can work together. Source: VS Code customization docs. Game points: 100 per board.',
       children: [
+        const Text(
+          'Two teams, one board each. Alternate guesses; the presenter reveals a matching answer or records a wrong guess. After three strikes, the other team gets one guess; settle any steal verbally. Reveal all to compare the choices.',
+        ),
         _columns(context, const [
-          _FeudBoard(title: 'Agent file (.agent.md)', answers: _agentAnswers),
-          _FeudBoard(title: 'Skill file (SKILL.md)', answers: _skillAnswers),
+          _FeudBoard(title: 'Custom agent (.agent.md)', answers: _agentAnswers),
+          _FeudBoard(title: 'Agent skill (SKILL.md)', answers: _skillAnswers),
         ]),
       ],
     );
@@ -771,10 +934,8 @@ class _FeudBoardState extends State<_FeudBoard> {
   final Set<int> _revealed = {};
   int _strikes = 0;
 
-  int get _score => _revealed.fold(
-    0,
-    (total, index) => total + widget.answers[index].points,
-  );
+  int get _score =>
+      _revealed.fold(0, (total, index) => total + widget.answers[index].points);
 
   @override
   Widget build(BuildContext context) {
@@ -873,13 +1034,34 @@ class _Checklist extends StatefulWidget {
 
 class _ChecklistState extends State<_Checklist> {
   static const _items = [
-    ('Folder name matches the name field', 'Lowercase letters, digits, and hyphens.'),
-    ('Description says what and when', 'Includes the phrases people actually type.'),
-    ('Steps are imperative and ordered', 'Each step explains why when it matters.'),
-    ('Done is defined', 'Checks to run and the expected output.'),
-    ('SKILL.md stays lean', 'Long detail lives in references/.'),
-    ('Helpers are linked relatively', 'scripts/, references/, assets/ are referenced from the body.'),
-    ('Tested in a fresh chat', 'Including prompts that should not trigger it.'),
+    (
+      'File structure and metadata are valid',
+      'Use <name>/SKILL.md with valid YAML; in VS Code, name must match the folder.',
+    ),
+    (
+      'Description says what and when',
+      'Include specific capabilities and trigger contexts, not a vague summary.',
+    ),
+    (
+      'Instructions are concise and actionable',
+      'Give clear steps and decision points; remove explanations the model already knows.',
+    ),
+    (
+      'Examples and success checks are concrete',
+      'Show expected inputs and outputs; explain how to validate results and fix failures.',
+    ),
+    (
+      'Supporting resources are linked and usable',
+      'Link files from SKILL.md; document dependencies and whether scripts should be read or run.',
+    ),
+    (
+      'Safety and permissions are reviewed',
+      'Audit bundled code and external sources; document risky actions and required approvals.',
+    ),
+    (
+      'Discovery and results are tested',
+      'Try relevant and unrelated prompts, real tasks, and intended models; compare with a no-skill baseline.',
+    ),
   ];
 
   final Set<int> _checked = {};
@@ -916,13 +1098,15 @@ class _ChecklistState extends State<_Checklist> {
           done
               ? const DSNotification(
                   type: DSNotificationType.success,
-                  titleText: 'Ready to ship',
-                  bodyText: 'Commit it to .github/skills/ and tell your team.',
+                  titleText: 'Ready to share',
+                  bodyText:
+                      'Authoring checks are complete. Share the skill and improve it with team feedback.',
                 )
               : DSNotification(
                   type: DSNotificationType.informative,
                   titleText: '${_checked.length} of ${_items.length} checked',
-                  bodyText: 'Tick every item before you share the skill.',
+                  bodyText:
+                      'Review the skill itself before sharing it, not just the result of one run.',
                 ),
         ]),
       ],
