@@ -10,6 +10,52 @@ import 'package:widgetbook_app/cz_style/export_cz.dart';
 
 final _czTheme = CzThemeData(designSystem: DsThemeDatacz());
 
+const _promptTask =
+    'Read the entire repository and identify every user-facing feature. '
+    'For each feature, write clear BDD scenarios in Given / When / Then. '
+    'Support each scenario with evidence from code, tests or documentation. '
+    'Do not invent behavior; report gaps in coverage. Create the output '
+    'directory if needed and write all .feature files only in';
+const _promptWithSkill =
+    '$_promptTask features/run-01/. Do not modify other files.';
+const _promptWithoutSkill =
+    '$_promptTask features/run-02/. Do not modify other files.';
+
+const _agendaItems = [
+  (
+    'Start beide agents vóór de inhoudelijke slides.',
+    DSIconAssets.arrowRight,
+  ),
+  (
+    'Levert opsplitsen betere BDD-scenario’s op?',
+    DSIconAssets.filesContract,
+  ),
+  (
+    'Agents voeren uit; skills beschrijven de aanpak.',
+    DSIconAssets.notificationCirclequestion,
+  ),
+  ('Kies het bestand dat bij het werk past.', DSIconAssets.layergroup),
+  ('Gebruik de echte skill-metadata.', DSIconAssets.filesFile),
+  (
+    'De description bepaalt wanneer een skill relevant is.',
+    DSIconAssets.pencil,
+  ),
+  ('Eén skillmap, met SKILL.md als startpunt.', DSIconAssets.layergroup),
+  ('Veelgemaakte fouten in SKILL.md.', DSIconAssets.lock),
+  ('Test een skill: drie stappen.', DSIconAssets.checkcircle),
+  ('Skill Feud.', DSIconAssets.group),
+  ('Terug naar de agentchats.', DSIconAssets.arrowRight),
+  (
+    'De hoofdagent bundelt en controleert resultaten.',
+    DSIconAssets.filesContract,
+  ),
+  ('Is je skill klaar?', DSIconAssets.checkcircle),
+  (
+    'Onderbouw je volgende beslissing met bewijs.',
+    DSIconAssets.arrowRight,
+  ),
+];
+
 void main() => runApp(const PresentationApp());
 
 class PresentationApp extends StatelessWidget {
@@ -43,13 +89,13 @@ class PresentationApp extends StatelessWidget {
         slides: [
           _slide(
             route: '/cover',
-            title: 'Skills for AI agents',
-            buttonLabel: 'Start',
+            title: 'Skills voor AI-agents',
+            buttonLabel: 'Begin',
             content: (context) => _page(
               context,
-              heading: 'Multi-agent brainstorming, made rigorous.',
+              heading: 'Agents voeren taken uit; skills geven ze instructies.',
               subText:
-                  'For developers already using Copilot: build a reusable brainstorm workflow, then verify what it returns.',
+                  'Ontdek het verschil tussen custom agents, subagents en skills, en zie hoe een skill onderzoek kan verdelen over subagents.',
               children: [
                 Wrap(
                   spacing: context.theme.spacings.xs,
@@ -74,9 +120,9 @@ class PresentationApp extends StatelessWidget {
                 ),
                 const DSNotification(
                   type: DSNotificationType.informative,
-                  titleText: 'What you will leave with',
+                  titleText: 'Dit neem je mee',
                   bodyText:
-                      'A skill header, a repeatable research workflow, and an authoring checklist. Gherkin documentation is a short second use case.',
+                      'Het verschil tussen agentrollen, subagents en skills; hoe de hoofdagent met een skill parallel onderzoek delegeert; en hoe je resultaten controleert. In de demo zet de hoofdagent gebruikersfeatures uit de repository om in BDD-featurebestanden.',
                 ),
               ],
             ),
@@ -86,78 +132,167 @@ class PresentationApp extends StatelessWidget {
             title: 'Agenda',
             content: (context) => _page(
               context,
-              heading: 'From a broad question to evidence.',
-              subText: 'The workflow inside multi-agent-brainstorm.',
+              heading: 'Van voorbereiding naar vergelijking.',
+              subText:
+                  'We starten twee runs, bespreken de aanpak, vergelijken de resultaten en eindigen met een concrete volgende stap.',
               children: [
-                DSList(
-                  children: [
-                    for (final (index, item) in const [
-                      (
-                        'When this skill fits',
-                        DSIconAssets.notificationCirclequestion,
+                _columns(context, [
+                  DSList(
+                    children: [
+                      for (final (index, item) in _agendaItems.take(7).indexed)
+                        DSListItem(
+                          subjectIcon: item.$2,
+                          label: item.$1,
+                          content: (index + 1).toString().padLeft(2, '0'),
+                        ),
+                    ],
+                  ),
+                  DSList(
+                    children: [
+                      for (final (index, item) in _agendaItems.skip(7).indexed)
+                        DSListItem(
+                          subjectIcon: item.$2,
+                          label: item.$1,
+                          content: (index + 8).toString().padLeft(2, '0'),
+                        ),
+                    ],
+                  ),
+                ]),
+              ],
+            ),
+          ),
+          _slide(
+            route: '/experiment-setup',
+            title: 'Vergelijk met en zonder skill',
+            content: (context) => _page(
+              context,
+              heading: 'Start beide agents vóór de inhoudelijke slides.',
+              subText:
+                  'We keren later terug om de resultaten te vergelijken.',
+              children: [
+                _columns(context, [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      DSHeadings(
+                        heading: 'Met skill',
+                        type: DSHeadingsType.sectionHeading,
+                        size: DSHeadingsSize.small,
                       ),
-                      ('Pick the right file', DSIconAssets.layergroup),
-                      ('Trigger and anatomy', DSIconAssets.filesFile),
-                      ('Frame and delegate', DSIconAssets.group),
-                      ('Research guardrails', DSIconAssets.lock),
-                      ('Synthesize and verify', DSIconAssets.checkcircle),
-                      ('Second use case: Gherkin docs', DSIconAssets.book),
-                      ('Game: Skill Feud', DSIconAssets.group),
-                      ('Live demo', DSIconAssets.arrowRight),
-                    ].indexed)
-                      DSListItem(
-                        subjectIcon: item.$2,
-                        label: item.$1,
-                        content: (index + 1).toString().padLeft(2, '0'),
+                      SizedBox(height: context.theme.spacings.s),
+                      _promptBlock(context, withSkill: true),
+                    ],
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      DSHeadings(
+                        heading: 'Zonder skill',
+                        type: DSHeadingsType.sectionHeading,
+                        size: DSHeadingsSize.small,
                       ),
+                      SizedBox(height: context.theme.spacings.s),
+                      _promptBlock(context, withSkill: false),
+                    ],
+                  ),
+                ]),
+                const DSNotification(
+                  type: DSNotificationType.informative,
+                  titleText:
+                    'De opdrachten zijn gelijk; alleen de eerste begint met /multi-agent-brainstorm. Beide schrijven naar een eigen map.',
+                  bodyText:
+                    'Voor de skill-run kiezen we het subagent-model en de gewenste effort.',
+                ),
+              ],
+            ),
+          ),
+          _slide(
+            route: '/body',
+            title: 'Opdracht achter de vergelijking',
+            content: (context) => _page(
+              context,
+              heading: 'Levert opsplitsen betere BDD-scenario’s op?',
+              subText:
+                  'We toetsen of meerdere afgebakende onderzoeken meer en concretere scenario’s opleveren dan één brede analyse.',
+              children: [
+                DsBulletList(
+                  title: 'Wat vergelijken we?',
+                  bulletItems: [
+                    BulletListItem(
+                      title: 'Meer relevante scenario’s',
+                      text:
+                          'Vinden we in aparte repositorydelen meer gebruikersfeatures en betekenisvolle varianten?',
+                      iconData: DSIconAssets.search,
+                    ),
+                    BulletListItem(
+                      title: 'Concretere scenario’s',
+                      text:
+                          'Zijn voorwaarden, acties en observeerbare uitkomsten specifieker in Given / When / Then?',
+                      iconData: DSIconAssets.filesContract,
+                    ),
+                    BulletListItem(
+                      title: 'Betere dekking en onderbouwing',
+                      text:
+                          'Zijn de scenario’s samen vollediger en aantoonbaar gebaseerd op code, tests of documentatie?',
+                      iconData: DSIconAssets.checkcircle,
+                    ),
                   ],
+                ),
+                const DSNotification(
+                  type: DSNotificationType.informative,
+                  titleText: 'Eerst: agents en skills',
+                  bodyText:
+                      'We bekijken hoe een skill subagents kan inzetten om deze opdracht uit te voeren.',
                 ),
               ],
             ),
           ),
           _slide(
             route: '/why',
-            title: 'Why skills?',
+            title: 'Agents en skills',
             content: (context) => _page(
               context,
-              heading: 'One skill, two high-value jobs.',
+              heading: 'Agents voeren uit; skills beschrijven de aanpak.',
               subText:
-                  'Today\'s main thread is independent brainstorming. The same skill also supports a separate app-documentation workflow.',
+                  'Een skill is geen agent: de hoofdagent volgt de instructies en kan daarin worden gevraagd subagents in te zetten.',
               children: [
                 _columns(context, [
                   DsBulletList(
-                    title: 'Broad brainstorm',
+                    title: 'Agents en subagents',
                     bulletItems: [
                       BulletListItem(
                         text:
-                            'Explore a broad question with meaningfully different options.',
-                        iconData: DSIconAssets.search,
-                      ),
-                      BulletListItem(
-                        text: 'Use independent, read-only research agents.',
+                            'Een custom agent krijgt een eigen rol, instructies en beschikbare tools.',
                         iconData: DSIconAssets.group,
                       ),
                       BulletListItem(
-                        text: 'Finish with a small set of testable choices.',
+                        text:
+                            'Een subagent voert een afgebakende taak uit in een eigen contextvenster.',
+                        iconData: DSIconAssets.filesFile,
+                      ),
+                      BulletListItem(
+                        text:
+                            'De subagent stuurt resultaten terug; de hoofdagent controleert en combineert die.',
                         iconData: DSIconAssets.checkcircle,
                       ),
                     ],
                   ),
                   DsBulletList(
-                    title: 'Second use case: app documentation',
+                    title: 'Skills',
                     bulletItems: [
                       BulletListItem(
                         text:
-                            'Inventory the app\'s observable user-facing behavior.',
-                        iconData: DSIconAssets.eye,
-                      ),
-                      BulletListItem(
-                        text: 'Write evidence-backed Gherkin .feature files.',
+                            'SKILL.md beschrijft taakgerichte kennis en een herhaalbare workflow.',
                         iconData: DSIconAssets.filesFile,
                       ),
                       BulletListItem(
                         text:
-                            'Track coverage and report evidence gaps honestly.',
+                            'Copilot kan de skill laden als je verzoek bij de description past; je kunt hem ook zelf aanroepen.',
+                        iconData: DSIconAssets.search,
+                      ),
+                      BulletListItem(
+                        text:
+                            'De skill kan de hoofdagent instrueren om deelonderzoek aan subagents te delegeren.',
                         iconData: DSIconAssets.checkcircle,
                       ),
                     ],
@@ -168,155 +303,47 @@ class PresentationApp extends StatelessWidget {
           ),
           _slide(
             route: '/agent-files',
-            title: 'Pick the right file',
+            title: 'Kies het juiste bestand',
             content: (context) => _page(
               context,
-              heading: 'Use the file that matches the work.',
+              heading: 'Kies het bestand dat bij het werk past.',
               subText:
-                  'This example is a user-invocable skill, not an autonomous agent persona.',
+                  'Leg teamafspraken, bestandsregels, rollen en herbruikbare taken vast op de juiste plek.',
               children: [
                 DSList(
                   children: [
                     _fileRow(
                       'copilot-instructions.md / AGENTS.md',
-                      'Repo-wide conventions that apply regardless of the current task.',
-                      'Always on',
+                      'Algemene afspraken voor het werken in deze repository. Bijvoorbeeld: gebruik onze codeconventies en voer tests uit na een wijziging.',
+                      'Teamafspraken',
                       DSTagType.positive,
                     ),
                     _fileRow(
                       '.github/instructions/*.instructions.md',
-                      'Rules for matching paths, scoped with a narrow applyTo glob.',
-                      'By file path',
+                      'Aanvullende regels voor bepaalde bestanden. Met applyTo geef je aan waar ze gelden, bijvoorbeeld testregels voor **/*_test.dart.',
+                      'Bestandsregels',
                       DSTagType.informative,
                     ),
                     _fileRow(
                       '.github/agents/*.agent.md',
-                      'A specialist role with its own tools, model, and boundaries.',
-                      'A role',
+                      'Een eigen rol voor Copilot, met instructies en een selectie van tools. Bijvoorbeeld: een reviewer die code beoordeelt, maar geen bestanden mag wijzigen.',
+                      'Rol',
                       DSTagType.warning,
                     ),
                     _fileRow(
                       '.github/prompts/*.prompt.md',
-                      'One reusable task that you start yourself.',
-                      'A command',
+                      'Een opgeslagen opdracht die je zelf aanroept. Bijvoorbeeld: vat een PR samen volgens een vast format. Alleen vragen om een PR-samenvatting activeert dit promptbestand niet; je moet het zelf kiezen.',
+                      'Zelf aanroepen',
                       DSTagType.neutral,
                     ),
                     _fileRow(
-                      '.github/skills/multi-agent-brainstorm/SKILL.md',
-                      'A discoverable workflow with explicit triggers, guardrails, and two procedures.',
-                      'A capability',
+                      '.github/skills/<skill-name>/SKILL.md',
+                      'Een pakket met taakinstructies en eventueel scripts of voorbeelden. Ook voor PR-samenvattingen: de description vertelt wanneer de skill relevant is, zodat Copilot de aanpak zelf kan laden. Je kunt een skill ook zelf aanroepen.',
+                      'Op aanvraag laden',
                       DSTagType.positive,
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-          _slide(
-            route: '/loading',
-            title: 'How skills get loaded',
-            content: (context) => _page(
-              context,
-              heading: 'The description is the gatekeeper.',
-              subText:
-                  'The agent sees the trigger first; the workflow is relevant only after the request matches.',
-              children: [
-                DSList(
-                  children: [
-                    _fileRow(
-                      '1. Metadata: name + description',
-                      'Always available for discovery. Name both brainstorm/comparison requests and full-app Gherkin documentation.',
-                      'Always loaded',
-                      DSTagType.positive,
-                    ),
-                    _fileRow(
-                      '2. Body of SKILL.md',
-                      'Holds the guardrails, brainstorm workflow, and app feature documentation workflow.',
-                      'On match',
-                      DSTagType.informative,
-                    ),
-                    _fileRow(
-                      '3. Optional resources',
-                      'Add scripts/, references/, or assets/ only when this skill needs reusable supporting material.',
-                      'On demand',
-                      DSTagType.neutral,
-                    ),
-                  ],
-                ),
-                const DSNotification(
-                  type: DSNotificationType.warning,
-                  titleText: 'The description is the gatekeeper',
-                  bodyText:
-                      'If the description does not match the request, nothing else in your skill is ever read.',
-                ),
-              ],
-            ),
-          ),
-          _slide(
-            route: '/anatomy',
-            title: 'Anatomy of a skill',
-            content: (context) => _page(
-              context,
-              heading: 'One folder packages a focused workflow.',
-              subText:
-                  'The current multi-agent-brainstorm skill keeps its process and reusable prompt patterns in SKILL.md.',
-              children: [
-                _columns(context, [
-                  DSList(
-                    children: const [
-                      DSListItem(
-                        subjectIcon: DSIconAssets.layergroup,
-                        label: '.github/skills/multi-agent-brainstorm/',
-                        content: 'Folder',
-                      ),
-                      DSListItem(
-                        subjectIcon: DSIconAssets.filesFile,
-                        label: 'SKILL.md',
-                        content: 'Required',
-                      ),
-                      DSListItem(
-                        subjectIcon: DSIconAssets.lock,
-                        label: 'Guardrails + workflow',
-                        content: 'Core',
-                      ),
-                      DSListItem(
-                        subjectIcon: DSIconAssets.group,
-                        label: 'Prompt patterns',
-                        content: 'Reusable',
-                      ),
-                      DSListItem(
-                        subjectIcon: DSIconAssets.filesContract,
-                        label: 'App feature docs',
-                        content: 'Second path',
-                      ),
-                    ],
-                  ),
-                  DsBulletList(
-                    title: 'What makes this skill work',
-                    bulletItems: [
-                      BulletListItem(
-                        text:
-                            'The name matches the folder and the description states exact trigger conditions.',
-                        iconData: DSIconAssets.check,
-                      ),
-                      BulletListItem(
-                        text:
-                            'The user-invocable skill asks before each run for reasoning effort.',
-                        iconData: DSIconAssets.check,
-                      ),
-                      BulletListItem(
-                        text:
-                            'Each agent gets a distinct, non-overlapping lens.',
-                        iconData: DSIconAssets.check,
-                      ),
-                      BulletListItem(
-                        text:
-                            'Claims are verified; no result is accepted by vote alone.',
-                        iconData: DSIconAssets.check,
-                      ),
-                    ],
-                  ),
-                ]),
               ],
             ),
           ),
@@ -325,33 +352,36 @@ class PresentationApp extends StatelessWidget {
             title: 'Frontmatter',
             content: (context) => _page(
               context,
-              heading: 'Use the real skill metadata.',
+              heading: 'Gebruik de echte skill-metadata.',
               subText:
-                  'Frontmatter is the YAML header between --- markers. It identifies the skill and says when to load it.',
+                  'Frontmatter is de YAML-header tussen twee regels met drie streepjes. Deze identificeert de skill en bepaalt wanneer die wordt geladen.',
               children: [
                 _codeBlock(
                   context,
                   '---\n'
                   'name: multi-agent-brainstorm\n'
                   'description: >-\n'
-                  '  Use when the user explicitly asks to brainstorm with multiple agents,\n'
-                  '  compare independent technical approaches, or document an application\'s\n'
-                  '  full user-facing functionality in Gherkin .feature files.\n'
+                  '  Use when the user invokes this skill with a task for multi-agent\n'
+                  '  coordination, or explicitly asks for parallel agent research, analysis,\n'
+                  '  brainstorming, comparison, documentation, or implementation. The prompt\n'
+                  '  after the slash defines the task and deliverable; BDD feature documentation\n'
+                  '  is one example, not the skill\'s sole purpose.\n'
+                  'argument-hint: \'Describe the task, desired outcome, scope and constraints, output location, and optional agent count or model.\'\n'
                   'user-invocable: true\n'
                   '---',
                 ),
                 DSList(
                   children: [
                     _fileRow(
-                      'Folder and name must match',
+                      'Map en naam moeten overeenkomen',
                       '.github/skills/multi-agent-brainstorm/SKILL.md',
-                      'Required',
+                      'Verplicht',
                       DSTagType.neutral,
                     ),
                     _fileRow(
                       'argument-hint',
-                      'The full skill also includes a hint for question, scope, model, and output location.',
-                      'Optional',
+                      'De hint vraagt om taak, gewenst resultaat, scope, beperkingen en uitvoerlocatie; agentenaantal en model zijn optioneel.',
+                      'Optioneel',
                       DSTagType.neutral,
                     ),
                   ],
@@ -361,220 +391,181 @@ class PresentationApp extends StatelessWidget {
           ),
           _slide(
             route: '/description',
-            title: 'Writing the description',
+            title: 'De description schrijven',
             content: (context) => _page(
               context,
-              heading: 'The description must name both paths.',
+              heading: 'De description bepaalt wanneer een skill relevant is.',
               subText:
-                  'A vague trigger either misses the workflow or activates it for unrelated work.',
+                  'Te breed matcht verkeerd, te smal mist relevante verzoeken.',
               children: [
                 _columns(context, [
                   const DSNotification(
                     type: DSNotificationType.error,
-                    titleText: 'Too vague',
-                    bodyText: '"Helps with AI tasks."',
+                    titleText: 'Te vaag',
+                    bodyText: '"Helpt bij AI-taken."',
                   ),
                   const DSNotification(
                     type: DSNotificationType.success,
-                    titleText: 'Specific and triggerable',
+                    titleText: 'Specifiek en activeerbaar',
                     bodyText:
-                        '"Use when the user explicitly asks to brainstorm with multiple agents, compare independent technical approaches, '
-                        'or document an application\'s full user-facing functionality in Gherkin .feature files."',
+                      '"Gebruik bij verzoeken die baat hebben bij parallel onderzoek, vergelijking of documentatie met agents."',
                   ),
                 ]),
-                DsBulletList(
-                  title: 'Why this trigger is discoverable',
-                  bulletItems: [
-                    BulletListItem(
-                      title: 'State the invocation condition',
-                      text:
-                          'It is for an explicit request, not every technical question.',
-                      iconData: DSIconAssets.pencil,
-                    ),
-                    BulletListItem(
-                      title: 'Name each supported workflow',
-                      text:
-                          'Independent brainstorming and full-app Gherkin documentation.',
-                      iconData: DSIconAssets.comment,
-                    ),
-                    BulletListItem(
-                      title: 'Use concrete language',
-                      text:
-                          'Multiple agents, technical approaches, user-facing behavior, Gherkin.',
-                      iconData: DSIconAssets.search,
-                    ),
-                    BulletListItem(
-                      title: 'Keep the scope honest',
-                      text:
-                          'The skill does not claim to solve every AI or documentation task.',
-                      iconData: DSIconAssets.arrowUp,
-                    ),
-                  ],
-                ),
+                _columns(context, [
+                  DSList(
+                    children: [
+                      _fileRow(
+                        '1. Metadata: name + description',
+                        'Maakt de skill vindbaar.',
+                        'Vindbaarheid',
+                        DSTagType.positive,
+                      ),
+                      _fileRow(
+                        '2. Body van SKILL.md',
+                        'Beschrijft de stappen en waarborgen die de agent volgt.',
+                        'Bij een match',
+                        DSTagType.informative,
+                      ),
+                      _fileRow(
+                        '3. Optionele bestanden',
+                        'Scripts, checklists of referenties alleen als ze helpen; verwijs ernaar vanuit SKILL.md.',
+                        'Optioneel',
+                        DSTagType.neutral,
+                      ),
+                    ],
+                  ),
+                  DsBulletList(
+                    title: 'Wat maakt een description duidelijk?',
+                    bulletItems: [
+                      BulletListItem(
+                        title: 'Benoem wanneer de skill past',
+                        text:
+                            'Koppel de skill aan een passend verzoek, niet aan elke technische vraag. '
+                            '“Helpt bij AI-taken” is te algemeen; “Gebruik bij het testen van API-endpoints” is duidelijker.',
+                        iconData: DSIconAssets.pencil,
+                      ),
+                      BulletListItem(
+                        title: 'Noem concrete taken',
+                        text:
+                            'Bijvoorbeeld: onderzoek, analyse, brainstormen, vergelijken, documenteren of implementeren met agents.',
+                        iconData: DSIconAssets.comment,
+                      ),
+                      BulletListItem(
+                        title: 'Herkenbare termen',
+                        text:
+                          'Gebruik woorden die jij en je team zelf voor deze taak gebruiken.',
+                        iconData: DSIconAssets.search,
+                      ),
+                      BulletListItem(
+                        title: 'Test de skill regelmatig',
+                        text:
+                            'Controleer of de skill nog op het juiste moment wordt geladen en goed presteert.',
+                        iconData: DSIconAssets.filter,
+                      ),
+                    ],
+                  ),
+                ]),
               ],
             ),
           ),
           _slide(
-            route: '/body',
-            title: 'Writing the body',
+            route: '/anatomy',
+            title: 'Opbouw van een skill',
             content: (context) => _page(
               context,
-              heading: 'Brainstorm workflow: frame, then divide.',
+              heading: 'Eén skillmap, met SKILL.md als startpunt.',
               subText:
-                  'Example decision: should a tool-routing app use a local model, a hosted model, or a hybrid?',
+                  'In deze map staat alleen SKILL.md: daarin staan de metadata, grenzen en een taakgestuurde coördinatiewerkwijze. Extra bestanden zijn optioneel.',
               children: [
-                DsBulletList(
-                  title: 'Before agents start',
-                  bulletItems: [
-                    BulletListItem(
-                      title: 'Frame the decision',
-                      text:
-                          'State the target, constraints, and verified facts. Label anything else as an assumption.',
-                      iconData: DSIconAssets.bullit,
-                    ),
-                    BulletListItem(
-                      title: 'Choose model and effort',
-                      text:
-                          'Resolve the subagent model, then ask for analysis depth each run. Disclose if effort is only prompt guidance.',
-                      iconData: DSIconAssets.search,
-                    ),
-                    BulletListItem(
-                      title: 'Four lenses, one shared brief',
-                      text:
-                          'Local capability, hosted feasibility, on-device performance, and safe execution. Research is read-only; never share secrets.',
-                      iconData: DSIconAssets.group,
-                    ),
-                    BulletListItem(
-                      title: 'Specify a return contract',
-                      text:
-                          'Each lens returns options, evidence, risks, and one test that could reject its recommendation.',
-                      iconData: DSIconAssets.checkcircle,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _slide(
-            route: '/synthesize',
-            title: 'Synthesize and verify',
-            content: (context) => _page(
-              context,
-              heading: 'Synthesize; do not vote.',
-              subText:
-                  'Agreement is not proof. The coordinating thread owns verification, follow-up tests, and all edits.',
-              children: [
-                DSList(
-                  children: [
-                    _fileRow(
-                      'Group overlap; surface disagreement',
-                      'Independent perspectives should expose different options, not create a vote.',
-                      'Compare',
-                      DSTagType.informative,
-                    ),
-                    _fileRow(
-                      'Verify consequential claims',
-                      'Check repository evidence, tests, or authoritative documentation before recommending.',
-                      'Evidence',
-                      DSTagType.positive,
-                    ),
-                    _fileRow(
-                      'Choose the next discriminating test',
-                      'State its baseline and pass criterion before running it.',
-                      'Test',
-                      DSTagType.warning,
-                    ),
-                    _fileRow(
-                      'Stop and report honestly',
-                      'Record blockers, budget limits, unresolved risks, or incomplete work.',
-                      'Report',
-                      DSTagType.neutral,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          _slide(
-            route: '/feature-docs',
-            title: 'App feature documentation',
-            content: (context) => _page(
-              context,
-              heading: 'For app docs, prove coverage.',
-              subText:
-                  'Second use case: Gherkin describes behavior as Given / When / Then. Here is a capability verified by this deck\'s widget test.',
-              children: [
-                DSList(
-                  children: [
-                    _fileRow(
-                      'Observe and verify',
-                      'Skill Feud has two Reveal all controls. The widget test verifies both boards reach 100.',
-                      'Evidence',
-                      DSTagType.positive,
-                    ),
-                    _fileRow(
-                      'Record the mapping',
-                      'A coverage ledger is a table: capability -> evidence -> scenario or an explicit gap.',
-                      'Trace',
-                      DSTagType.informative,
-                    ),
-                    _fileRow(
-                      'Check the whole inventory',
-                      'One example is not full coverage. Every in-scope capability needs a scenario or a recorded gap.',
-                      'Gate',
-                      DSTagType.warning,
-                    ),
-                  ],
-                ),
-                _codeBlock(
-                  context,
-                  'Feature: Skill Feud\n'
-                  '  Scenario: Reveal every answer\n'
-                  '    Given both boards have unrevealed answers\n'
-                  '    When I reveal all answers on both boards\n'
-                  '    Then each board shows a score of 100',
-                ),
-                const Text(
-                  'Illustrative documentation, not an executable Gherkin test.',
-                ),
+                _columns(context, [
+                  DSList(
+                    children: const [
+                      DSListItem(
+                        subjectIcon: DSIconAssets.layergroup,
+                        label: '.github/skills/multi-agent-brainstorm/',
+                        content: 'Skillmap',
+                      ),
+                      DSListItem(
+                        subjectIcon: DSIconAssets.filesFile,
+                        label: 'SKILL.md',
+                        content: 'Verplicht startpunt',
+                      ),
+                      DSListItem(
+                        subjectIcon: DSIconAssets.pencil,
+                        label: 'Frontmatter',
+                        content: 'Naam + description',
+                      ),
+                      DSListItem(
+                        subjectIcon: DSIconAssets.lock,
+                        label: 'Body',
+                        content: 'Grenzen + werkwijze',
+                      ),
+                      DSListItem(
+                        subjectIcon: DSIconAssets.filesContract,
+                        label: 'Scripts / referenties / assets',
+                        content: 'Optioneel; geen aanwezig',
+                      ),
+                    ],
+                  ),
+                  DsBulletList(
+                    title: 'Wat deze SKILL.md aanstuurt',
+                    bulletItems: [
+                      BulletListItem(
+                        text:
+                            'De opdracht na /multi-agent-brainstorm bepaalt de taak; de skill geeft een generieke coördinatiewerkwijze.',
+                        iconData: DSIconAssets.filesFile,
+                      ),
+                      BulletListItem(
+                        text:
+                            'De hoofdagent verdeelt onafhankelijk werk over subagents met taakgerichte opdrachten.',
+                        iconData: DSIconAssets.group,
+                      ),
+                      BulletListItem(
+                        text:
+                            'De hoofdagent combineert en controleert hun resultaten en levert de gevraagde output; BDD .feature-bestanden zijn één voorbeeld.',
+                        iconData: DSIconAssets.filesContract,
+                      ),
+                    ],
+                  ),
+                ]),
               ],
             ),
           ),
           _slide(
             route: '/mistakes',
-            title: 'Common mistakes',
+            title: 'Veelvoorkomende fouten',
             content: (context) => _page(
               context,
-              heading: 'Guardrails prevent predictable failures.',
+              heading: 'Veelgemaakte fouten in SKILL.md.',
               subText:
-                  'Independent perspectives are useful only when the prompts and conclusions are handled carefully.',
+                  'Een bruikbare SKILL.md maakt de werkwijze concreet, begrensd en veilig.',
               children: [
                 _columns(context, const [
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Overlapping lenses',
+                    titleText: 'Instructies blijven algemeen',
                     bodyText:
-                        'Near-identical agents add noise instead of independent evidence.',
+                        'Vervang algemene achtergrond door concrete stappen, beslismomenten en verwachte uitvoer.',
                   ),
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Treating agreement as proof',
+                    titleText: 'Scope en uitzonderingen ontbreken',
                     bodyText:
-                        'Verify consequential claims against code, tests, or trusted docs.',
+                        'Leg vast wat de skill wel en niet doet, en wanneer de agent moet doorvragen of stoppen.',
                   ),
                 ]),
                 _columns(context, const [
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Silent model substitution',
+                    titleText: 'Extra bestanden staan los',
                     bodyText:
-                        'Honor the requested model; label unavailable details and prompt-only effort honestly.',
+                        'Verwijs vanuit SKILL.md naar scripts en referenties. Beschrijf wanneer de agent ze gebruikt.',
                   ),
                   DSNotification(
                     type: DSNotificationType.warning,
-                    titleText: 'Claiming complete app coverage early',
+                    titleText: 'Risicovolle acties zijn onbegrensd',
                     bodyText:
-                        'Map every in-scope capability or record an evidence gap/out-of-scope item.',
+                        'Benoem risicovolle acties en vereiste toestemming; SKILL.md-instructies vervangen geen toolbeperkingen.',
                   ),
                 ]),
               ],
@@ -582,51 +573,34 @@ class PresentationApp extends StatelessWidget {
           ),
           _slide(
             route: '/testing',
-            title: 'Test like code',
+            title: 'Test de skill',
             content: (context) => _page(
               context,
-              heading: 'Validate the workflow, not agent charisma.',
-              subText:
-                  'Test the trigger, the independence of the research, and whether the conclusion is evidence-backed.',
+              heading: 'Test een skill: drie stappen.',
+              subText: 'Check of de skill start, goed werkt en iets toevoegt.',
               children: [
-                DSList(
-                  children: const [
-                    DSListItem(
-                      subjectIcon: DSIconAssets.pencil,
-                      label:
-                          'Positive: ask for independent technical approaches',
-                      content: '01',
+                DsBulletList(
+                  title: 'Drie vragen',
+                  bulletItems: [
+                    BulletListItem(
+                      title: 'Wordt de skill op het juiste moment geladen?',
+                      text:
+                          'Test een passend en een niet-passend verzoek. Controleer beide uitkomsten.',
+                      iconData: DSIconAssets.search,
                     ),
-                    DSListItem(
-                      subjectIcon: DSIconAssets.comment,
-                      label:
-                          'Near miss: give a simple task with one clear owner',
-                      content: '02',
+                    BulletListItem(
+                      title: 'Levert de skill goed werk?',
+                      text:
+                          'Gebruik een echte taak en criteria die je vooraf vastlegt.',
+                      iconData: DSIconAssets.checkcircle,
                     ),
-                    DSListItem(
-                      subjectIcon: DSIconAssets.eye,
-                      label:
-                          'Confirm model resolution and effort question each run',
-                      content: '03',
-                    ),
-                    DSListItem(
-                      subjectIcon: DSIconAssets.arrowRotateright,
-                      label:
-                          'Check each agent has a distinct lens and shared facts',
-                      content: '04',
-                    ),
-                    DSListItem(
-                      subjectIcon: DSIconAssets.group,
-                      label: 'Verify recommendations with a baseline test',
-                      content: '05',
+                    BulletListItem(
+                      title: 'Voegt de skill iets toe?',
+                      text:
+                          'Test dezelfde taak in nieuwe sessies, met en zonder skill. Vergelijk kwaliteit, tijd en tokens.',
+                      iconData: DSIconAssets.arrowRotateright,
                     ),
                   ],
-                ),
-                const DSNotification(
-                  type: DSNotificationType.success,
-                  titleText: 'Test the boundaries too',
-                  bodyText:
-                      'Check that explicit requests trigger the workflow and routine single-owner tasks do not fan out unnecessarily.',
                 ),
               ],
             ),
@@ -638,60 +612,79 @@ class PresentationApp extends StatelessWidget {
           ),
           _slide(
             route: '/demo',
-            title: 'Live demo: model-selected tool routing',
+            title: 'Demo: resultaten vergelijken',
             content: (context) => _page(
               context,
-              heading: 'Demo: model-selected tool routing.',
+              heading: 'Terug naar de agentchats.',
               subText:
-                  'Prepared hypothetical case, not claims about a real app. Watch how independent lenses change the recommendation.',
+                  'We leggen de voorstellen uit beide runs naast elkaar. Wat valt ons op aan de aanpak, volledigheid en kwaliteit van de BDD-scenario’s?',
               children: [
-                _columns(context, [
-                  const DSNotification(
-                    type: DSNotificationType.informative,
-                    titleText: 'Live prompt: four independent lenses',
-                    bodyText:
-                        '/multi-agent-brainstorm Compare local, hosted, and hybrid tool routing for a hypothetical support app. Assume it must work offline, never send customer data to a provider, and always ask before write actions. No model or latency benchmarks exist yet. Use four lenses: local capability, hosted feasibility/privacy, on-device performance, and safe dispatch. Return ranked options, evidence vs assumptions, risks, and one minimal test. Research only; do not edit.',
-                  ),
-                  DSList(
-                    children: [
-                      DSListItem.twoLiner(
-                        label: 'Before sending',
-                        content:
-                            'Keep the assumptions identical for every lens. Do not add customer data, credentials, or private reasoning traces.',
-                      ),
-                      DSListItem.twoLiner(
-                        label: 'Resolve model + effort',
-                        content:
-                            'Confirm an available subagent model and answer the skill\'s effort question. These settings do not select the app\'s model.',
-                      ),
-                      DSListItem.twoLiner(
-                        label: 'If the demo is blocked',
-                        content:
-                            'Stop rather than silently substitute. Walk through the brief and expected return structure; do not present invented results as a run.',
-                      ),
-                    ],
-                  ),
-                ]),
                 DsBulletList(
-                  title: 'What to watch for in the live run',
+                  title: 'Waar je op let bij de vergelijking',
                   bulletItems: [
                     BulletListItem(
-                      title: 'Do the lenses find different trade-offs?',
+                      title: 'Hoe is het onderzoek uitgevoerd?',
                       text:
-                          'Look for distinct options, not four copies of the same answer.',
+                          'Controleer welke skills en subagents elke run heeft gebruikt. Zonder expliciete skill-aanroep kan Copilot een skill alsnog automatisch laden. Subagents onderzoeken in aparte contextvensters en sturen hun bevindingen terug naar de hoofdagent.',
                       iconData: DSIconAssets.group,
                     ),
                     BulletListItem(
-                      title: 'Does anyone invent a benchmark?',
+                      title: 'Is elke gebruikersfeature geïnventariseerd?',
                       text:
-                          'No measured latency or model capability was supplied; those claims need verification.',
+                          'Controleer de volledige scope per appgebied, rol, platform en betekenisvolle variant.',
+                      iconData: DSIconAssets.group,
+                    ),
+                    BulletListItem(
+                      title: 'Is ieder scenario onderbouwd?',
+                      text:
+                          'Verifieer gedrag met code, tests of documentatie. Noteer hiaten in plaats van gedrag te verzinnen.',
                       iconData: DSIconAssets.search,
                     ),
                     BulletListItem(
-                      title: 'What would change our decision?',
+                      title: 'Zijn de voorgestelde bestanden bruikbaar?',
                       text:
-                          'Choose one proposed check and name its baseline and pass criterion before running it.',
+                          'Controleer de Given / When / Then-structuur, samengevoegde overlap en expliciete scopehiaten.',
                       iconData: DSIconAssets.checkcircle,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          _slide(
+            route: '/synthesize',
+            title: 'Van onderzoek naar featurebestanden',
+            content: (context) => _page(
+              context,
+              heading: 'De hoofdagent bundelt en controleert resultaten.',
+              subText:
+                  'Subagents onderzoeken aparte delen van de app. De hoofdagent maakt van hun bevindingen een samenhangende set BDD-featurebestanden.',
+              children: [
+                DSList(
+                  children: [
+                    _fileRow(
+                      'Voeg dubbele scenario’s samen',
+                      'Beschrijven meerdere subagents hetzelfde gedrag? Maak er één scenario van. Behoud verschillen per rol, platform of situatie.',
+                      'Bundelen',
+                      DSTagType.informative,
+                    ),
+                    _fileRow(
+                      'Controleer elk scenario',
+                      'Vergelijk de stappen met code, tests of documentatie. Neem gedrag niet op als je er geen bewijs voor vindt.',
+                      'Bewijs',
+                      DSTagType.positive,
+                    ),
+                    _fileRow(
+                      'Loop de featurelijst na',
+                      'Elke feature binnen scope krijgt een scenario. Noteer welke features niet genoeg bewijs hebben.',
+                      'Compleet',
+                      DSTagType.warning,
+                    ),
+                    _fileRow(
+                      'Laat de hoofdagent de bestanden schrijven',
+                      'Subagents leveren alleen onderzoek aan. De hoofdagent schrijft de .feature-bestanden en vermeldt wat nog niet is gecontroleerd.',
+                      'Uitvoer',
+                      DSTagType.neutral,
                     ),
                   ],
                 ),
@@ -705,40 +698,40 @@ class PresentationApp extends StatelessWidget {
           ),
           _slide(
             route: '/closing',
-            title: 'Start small',
-            buttonLabel: 'Back to start',
+            title: 'Begin klein',
+            buttonLabel: 'Terug naar start',
             onPrimaryPressed: (context) => context.flutterDeck.goToSlide(1),
             content: (context) => _page(
               context,
-              heading: 'Make the next decision evidence-backed.',
+              heading: 'Onderbouw je volgende beslissing met bewijs.',
               subText:
-                  'This week: capture one repeated task in SKILL.md, test it in a fresh conversation, and share it after the checklist passes.',
+                  'Deze week: beschrijf in SKILL.md een werkwijze die je agent kan herhalen. Test de skill in een nieuw gesprek en deel de skill zodra de checklist is doorlopen.',
               children: [
                 DsBulletList(
-                  title: 'Take the workflow with you',
+                  title: 'Zo begin je met je eigen skill',
                   bulletItems: [
                     BulletListItem(
-                      title: 'Frame one useful question',
+                      title: 'Kies één terugkerende taak',
                       text:
-                          'State what decision you need and which constraints matter.',
+                          'Begin met iets uit je eigen werk, zoals code review, testen of documentatie schrijven.',
                       iconData: DSIconAssets.search,
                     ),
                     BulletListItem(
-                      title: 'Choose the skill workflow',
+                      title: 'Leg de aanpak vast',
                       text:
-                          'Independent brainstorm or evidence-backed Gherkin documentation.',
+                          'Beschrijf in SKILL.md wanneer de skill past, welke stappen de agent volgt en wat het resultaat moet zijn.',
                       iconData: DSIconAssets.pencil,
                     ),
                     BulletListItem(
-                      title: 'Verify before recommending',
+                      title: 'Probeer uit en verbeter',
                       text:
-                          'Check evidence, disagreements, and one discriminating test.',
+                          'Test met een echte opdracht in een nieuw gesprek. Pas de instructies aan als het resultaat niet voldoet.',
                       iconData: DSIconAssets.checkcircle,
                     ),
                     BulletListItem(
-                      title: 'Report what remains',
+                      title: 'Deel met je team',
                       text:
-                          'Name assumptions, blockers, budget limits, and coverage gaps.',
+                          'Loop de checklist na, laat een collega de skill proberen en verwerk de feedback.',
                       iconData: DSIconAssets.group,
                     ),
                   ],
@@ -756,7 +749,7 @@ FlutterDeckSlide _slide({
   required String route,
   required String title,
   required Widget Function(BuildContext context) content,
-  String buttonLabel = 'Next',
+  String buttonLabel = 'Volgende',
   void Function(BuildContext context)? onPrimaryPressed,
 }) {
   return FlutterDeckSlide.template(
@@ -806,6 +799,32 @@ Widget _codeBlock(BuildContext context, String code) {
   );
 }
 
+Widget _promptBlock(BuildContext context, {required bool withSkill}) {
+  final theme = context.theme;
+  final textStyle = theme.textStyles.bodyM.copyWith(fontFamily: 'monospace');
+
+  return DSCard(
+    child: Padding(
+      padding: EdgeInsets.all(theme.spacings.m),
+      child: SelectableText.rich(
+        TextSpan(
+          style: textStyle,
+          children: [
+            if (withSkill)
+              TextSpan(
+                text: '/multi-agent-brainstorm\n',
+                style: textStyle.copyWith(fontWeight: FontWeight.bold),
+              )
+            else
+              const TextSpan(text: '\n'),
+            TextSpan(text: withSkill ? _promptWithSkill : _promptWithoutSkill),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 Widget _columns(BuildContext context, List<Widget> children) {
   final spacing = context.theme.spacings;
   return Row(
@@ -831,66 +850,66 @@ typedef _FeudAnswer = ({String answer, String detail, int points});
 
 const List<_FeudAnswer> _agentAnswers = [
   (
-    answer: 'Give a reviewer its own role instructions',
+    answer: 'Geef een reviewer eigen rolinstructies',
     detail:
-        'Define the reviewer\'s priorities and expected output, rather than a task recipe.',
+        'Bepaal de prioriteiten en verwachte uitvoer van de reviewer, niet een taakrecept.',
     points: 30,
   ),
   (
-    answer: 'Limit a planner to read-only tools',
+    answer: 'Beperk een planner tot read-only tools',
     detail:
-        'Configure which tools the role can use; this is tool selection, not workflow guidance.',
+        'Configureer welke tools de rol mag gebruiken; dat is toolselectie, geen workflowbegeleiding.',
     points: 25,
   ),
   (
-    answer: 'Configure a model for a specialist role',
+    answer: 'Configureer een model voor een specialistische rol',
     detail:
-        'Set the custom agent\'s model where the selected VS Code harness supports it.',
+        'Stel het model van de custom agent in als de gekozen VS Code-harness dit ondersteunt.',
     points: 20,
   ),
   (
-    answer: 'Switch from planning to implementation',
+    answer: 'Schakel over van plannen naar implementeren',
     detail:
-        'A handoff switches the active agent with conversation context and a prefilled next-step prompt.',
+        'Een handoff wisselt de actieve agent met behoud van de conversation context en een vooraf ingevulde prompt voor de volgende stap.',
     points: 15,
   ),
   (
-    answer: 'Delegate research and get a result back',
+    answer: 'Delegeer research en ontvang het resultaat',
     detail:
-        'A custom subagent performs delegated work; the parent continues with its result rather than switching roles.',
+        'Een custom subagent voert het gedelegeerde werk uit; de parent-agent gaat verder met het resultaat in plaats van van rol te wisselen.',
     points: 10,
   ),
 ];
 
 const List<_FeudAnswer> _skillAnswers = [
   (
-    answer: 'Teach a repeatable testing procedure',
+    answer: 'Leer een herhaalbare testprocedure aan',
     detail:
-        'Package the task steps and expected results independently of the agent\'s role.',
+        'Verpak de taakstappen en verwachte resultaten los van de rol van de agent.',
     points: 30,
   ),
   (
-    answer: 'Bundle a setup script and service templates',
+    answer: 'Bundel een setup-script en service-templates',
     detail:
-        'Distribute the workflow with supporting files referenced from SKILL.md.',
+        'Verspreid de workflow met ondersteunende bestanden waarnaar SKILL.md verwijst.',
     points: 25,
   ),
   (
-    answer: 'Make domain guidance discoverable on demand',
+    answer: 'Maak domeinkennis op aanvraag vindbaar',
     detail:
-        'Metadata helps match a task; instructions load when invoked. Relevance does not guarantee invocation.',
+        'Metadata helpt een taak te matchen; instructies worden geladen wanneer de skill wordt aangeroepen. Relevantie garandeert geen activatie.',
     points: 20,
   ),
   (
-    answer: 'Share task knowledge across AI products',
+    answer: 'Deel taakkennis tussen AI-producten',
     detail:
-        'Use the Agent Skills standard with compatible products; check locations, dependencies, and optional features.',
+        'Gebruik de Agent Skills-standaard in compatibele producten; controleer locaties, dependencies en optionele features.',
     points: 15,
   ),
   (
-    answer: 'Keep a deployment recipe manual-only',
+    answer: 'Maak een deployment-recept alleen handmatig aanroepbaar',
     detail:
-        'Set disable-model-invocation: true and invoke /skill-name yourself; this controls activation, not permissions.',
+        'Stel disable-model-invocation: true in en roep /skill-name zelf aan; dit regelt activatie, niet permissions.',
     points: 10,
   ),
 ];
@@ -904,10 +923,10 @@ class _SkillFeud extends StatelessWidget {
       context,
       heading: 'Skill Feud.',
       subText:
-          'When to choose which in VS Code? Agents configure roles; skills supply task know-how. These are distinct reasons to choose, not exclusive capabilities. They can work together. Source: VS Code customization docs. Game points: 100 per board.',
+          'Een custom agent krijgt een eigen rol; een skill beschrijft hoe je een taak uitvoert.\nBron: VS Code-documentatie.',
       children: [
         const Text(
-          'Two teams, one board each. Alternate guesses; the presenter reveals a matching answer or records a wrong guess. After three strikes, the other team gets one guess; settle any steal verbally. Reveal all to compare the choices.',
+          'Twee teams proberen om de beurt de verborgen antwoorden te raden. De presentator onthult goed geraden antwoorden en houdt missers bij.',
         ),
         _columns(context, const [
           _FeudBoard(title: 'Custom agent (.agent.md)', answers: _agentAnswers),
@@ -968,9 +987,9 @@ class _FeudBoardState extends State<_FeudBoard> {
                     )
                   : DSListItem(
                       subjectIcon: DSIconAssets.notificationCirclequestion,
-                      label: 'Answer ${index + 1}',
+                      label: 'Antwoord ${index + 1}',
                       content: '?',
-                      semanticHint: 'Reveal answer ${index + 1}',
+                      semanticHint: 'Toon antwoord ${index + 1}',
                       onTap: () => setState(() => _revealed.add(index)),
                     ),
           ],
@@ -979,7 +998,7 @@ class _FeudBoardState extends State<_FeudBoard> {
         Row(
           children: [
             DSButton.secondary(
-              text: 'Wrong guess',
+              text: 'Fout antwoord',
               size: DSButtonSize.small,
               width: DSButtonWidth.hug,
               leadingIcon: DSIconAssets.times,
@@ -989,7 +1008,7 @@ class _FeudBoardState extends State<_FeudBoard> {
             ),
             SizedBox(width: spacing.s),
             DSButton.tertiary(
-              text: 'Reveal all',
+              text: 'Alles tonen',
               size: DSButtonSize.small,
               width: DSButtonWidth.hug,
               onPressed: allRevealed
@@ -1005,7 +1024,7 @@ class _FeudBoardState extends State<_FeudBoard> {
               const DSTag(
                 type: DSTagType.negative,
                 variant: DSTagVariant.standard,
-                text: 'Strike',
+                text: 'Fout',
                 leadingIcon: DSIconAssets.times,
               ),
               SizedBox(width: spacing.xxs),
@@ -1016,8 +1035,8 @@ class _FeudBoardState extends State<_FeudBoard> {
           SizedBox(height: spacing.s),
           const DSNotification(
             type: DSNotificationType.error,
-            titleText: 'Three strikes!',
-            bodyText: 'The other team gets one guess to steal the points.',
+            titleText: 'Drie missers!',
+            bodyText: 'Het andere team krijgt één kans om de punten te stelen.',
           ),
         ],
       ],
@@ -1035,32 +1054,32 @@ class _Checklist extends StatefulWidget {
 class _ChecklistState extends State<_Checklist> {
   static const _items = [
     (
-      'File structure and metadata are valid',
-      'Use <name>/SKILL.md with valid YAML; in VS Code, name must match the folder.',
+      'Staan bestand en metadata goed?',
+      'Gebruik <naam>/SKILL.md met geldige YAML. In VS Code moeten mapnaam en naam in YAML overeenkomen.',
     ),
     (
-      'Description says what and when',
-      'Include specific capabilities and trigger contexts, not a vague summary.',
+      'Is duidelijk wanneer de skill past?',
+      'Benoem de taak en wanneer de agent de skill moet laden.',
     ),
     (
-      'Instructions are concise and actionable',
-      'Give clear steps and decision points; remove explanations the model already knows.',
+      'Kan de agent de stappen volgen?',
+      'Geef concrete stappen, grenzen en beslismomenten.',
     ),
     (
-      'Examples and success checks are concrete',
-      'Show expected inputs and outputs; explain how to validate results and fix failures.',
+      'Is duidelijk wat een goed resultaat is?',
+      'Geef een voorbeeld en leg uit hoe je het resultaat controleert.',
     ),
     (
-      'Supporting resources are linked and usable',
-      'Link files from SKILL.md; document dependencies and whether scripts should be read or run.',
+      'Zijn extra bestanden goed gekoppeld?',
+      'Verwijs naar scripts of voorbeelden en leg uit wanneer de agent ze gebruikt.',
     ),
     (
-      'Safety and permissions are reviewed',
-      'Audit bundled code and external sources; document risky actions and required approvals.',
+      'Zijn risicovolle acties begrensd?',
+      'Leg vast wanneer de agent toestemming vraagt of moet stoppen.',
     ),
     (
-      'Discovery and results are tested',
-      'Try relevant and unrelated prompts, real tasks, and intended models; compare with a no-skill baseline.',
+      'Heb je de skill in de praktijk getest?',
+      'Test passende en niet-passende verzoeken. Vergelijk in aparte gesprekken dezelfde taak met en zonder skill.',
     ),
   ];
 
@@ -1073,8 +1092,8 @@ class _ChecklistState extends State<_Checklist> {
 
     return _page(
       context,
-      heading: 'Is your skill ready?',
-      subText: 'Run through this list before you share a skill with your team.',
+      heading: 'Is je skill klaar?',
+      subText: 'Loop deze lijst na voordat je de skill met je team deelt.',
       children: [
         _columns(context, [
           Column(
@@ -1098,15 +1117,16 @@ class _ChecklistState extends State<_Checklist> {
           done
               ? const DSNotification(
                   type: DSNotificationType.success,
-                  titleText: 'Ready to share',
+                  titleText: 'Klaar om te delen',
                   bodyText:
-                      'Authoring checks are complete. Share the skill and improve it with team feedback.',
+                      'De checklist is doorlopen. Deel de skill en verwerk feedback van je team.',
                 )
               : DSNotification(
                   type: DSNotificationType.informative,
-                  titleText: '${_checked.length} of ${_items.length} checked',
+                  titleText:
+                      '${_checked.length} van ${_items.length} afgevinkt',
                   bodyText:
-                      'Review the skill itself before sharing it, not just the result of one run.',
+                      'Controleer de skill zelf voordat je deze deelt, niet alleen het resultaat van één run.',
                 ),
         ]),
       ],
@@ -1133,11 +1153,11 @@ Widget _declarationStyledSlide({
   final theme = AppTheme.of(context)!;
 
   return DSFocusOverlay(
-    header: const DSFocusOverlayHeader(title: 'Skills for AI agents'),
+    header: const DSFocusOverlayHeader(title: 'Skills voor AI-agents'),
     // Mirrors DSLinearProgressBar without its restart-from-zero animation.
     progressBar: LinearProgressIndicator(
       value: progress,
-      semanticsLabel: 'Presentation progress',
+      semanticsLabel: 'Voortgang van de presentatie',
       semanticsValue: '${(progress * 100).round()}%',
       minHeight: theme.spacings.s,
       backgroundColor: theme.colors.mule,
